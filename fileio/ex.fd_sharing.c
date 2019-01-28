@@ -45,6 +45,28 @@ main(int argc, char *argv[])
     if (fd1 == -1)
         errExit("opening file %s", argv[1]);
 
+    fd2 = dup(fd1);
+    if (fd2 == -1)
+        errExit("duping fd1 into fd2");
+
+    flags = fcntl(fd1, F_GETFL);
+    off_t offset = lseek(fd1, 0, SEEK_CUR);
+    if (offset == -1)
+        errExit("lseek");
+
+    printf("fd1: offset: %zd, append bit: %x\n", (ssize_t) offset, (flags & O_APPEND));
+
+    flags |= O_APPEND;
+    fcntl(fd2, F_SETFL, flags);
+    offset = lseek(fd2, 1, SEEK_CUR);
+    if (offset == -1) {
+        errExit("lseek");
+    }
+    printf("fd2: offset: %zd, append bit: %x\n", (ssize_t) offset, (flags & O_APPEND));
+    offset = lseek(fd1, 0, SEEK_CUR);
+
+    printf("fd1: offset: %zd\n", (ssize_t) offset);
+
     /* FIXME: Complete as described in comments above */
 
     exit(EXIT_SUCCESS);
