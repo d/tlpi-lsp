@@ -23,6 +23,36 @@
 #include <fcntl.h>
 #include "tlpi_hdr.h"
 
+static void do_tee(const char pathname[], int doAppend)
+{
+    char buf[255];
+    ssize_t nr, nw;
+    int fd=0;
+    mode_t mode = S_IRUSR | S_IWUSR;
+    if (doAppend)
+    {
+        fd = open(pathname, O_WRONLY | O_CREAT | O_APPEND, mode);
+    }
+    else
+    {
+        fd = open(pathname, O_WRONLY | O_CREAT | O_TRUNC, mode);
+    }
+
+    if (fd < 0)
+        errExit("opening %s", pathname);
+
+    while ((nr = read(STDIN_FILENO, buf, sizeof(buf))) > 0)
+    {
+        nw = write(fd, buf, nr);
+        if (nw < 0)
+            errExit("write");
+        nw = write(STDOUT_FILENO, buf, nr);
+        if (nw < 0)
+            errExit("writing to stdout");
+    }
+    close(fd);
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -63,6 +93,7 @@ main(int argc, char *argv[])
     /* FIXME: Create and open 'pathname' for output, using either O_APPEND
        or O_TRUNC; for the bit values (S_I*) used to construct the 'mode'
        argument, see the open(2) man page. */
+    do_tee(pathname, doAppend);
 
     /* FIXME: Read STDIN_FILENO until EOF, copying data to both
        STDOUT_FILENO and descriptor returned by open() */
