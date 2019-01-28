@@ -24,6 +24,13 @@
 */
 #include <fcntl.h>
 #include "tlpi_hdr.h"
+#include <sys/syscall.h>
+#include <linux/kcmp.h>
+
+static int kcmp(pid_t pid1, pid_t pid2, int type, unsigned long idx1, unsigned long idx2)
+{
+    return syscall(SYS_kcmp, pid1, pid2, type, idx1, idx2);
+}
 
 static void
 printFileDescriptionInfo(int fd)
@@ -66,6 +73,16 @@ main(int argc, char *argv[])
     offset = lseek(fd1, 0, SEEK_CUR);
 
     printf("fd1: offset: %zd\n", (ssize_t) offset);
+
+    pid_t pid = getpid();
+    if (kcmp(pid, pid, KCMP_FILE, fd1, fd2) == 0)
+    {
+        printf("fd1 refers to the same OFD as fd2\n");
+    }
+    else
+    {
+        printf("fd1 does not refer to the same OFD as fd2\n");
+    }
 
     /* FIXME: Complete as described in comments above */
 
