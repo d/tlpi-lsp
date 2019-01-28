@@ -35,15 +35,17 @@ IMPL_CFLAGS = -std=c99 -D_XOPEN_SOURCE=600 \
 
 IMPL_CFLAGS += \
 		-Werror \
-		-Wno-unused-variable -Wno-unused-but-set-variable \
+		-Wno-unused-variable \
 		-Wno-unused-function -Wno-missing-prototypes
 
 # clang(1) is a little more zealous than gcc(1) with respect to some warnings.
 # Suppress those warnings (which, at least in the book code, relate to code
 # that is fine).
 
-ifeq ($(CC),clang)
+ifeq ($(CC),clang-8)
 	IMPL_CFLAGS += -Wno-uninitialized -Wno-infinite-recursion
+else
+	IMPL_CFLAGS += -Wno-unused-but-set-variable
 endif
 
 CFLAGS = ${IMPL_CFLAGS}

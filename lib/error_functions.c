@@ -66,10 +66,10 @@ outputError(Boolean useErr, int err, Boolean flushStdout,
     else
         snprintf(errText, BUF_SIZE, ":");
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wformat-truncation"
+//#pragma GCC diagnostic push
+//#pragma GCC diagnostic ignored "-Wformat-truncation"
     snprintf(buf, BUF_SIZE, "ERROR%s %s\n", errText, userMsg);
-#pragma GCC diagnostic pop
+//#pragma GCC diagnostic pop
 
     if (flushStdout)
         fflush(stdout);       /* Flush any pending stdout */
