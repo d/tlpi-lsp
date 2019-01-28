@@ -36,5 +36,8 @@ main(int argc, char *argv[])
 
     /* FIXME: Open 'pathname', seek to 'offset', and write 'string' */
 
+    int fd = open(pathname, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
+    lseek(fd, offset, SEEK_SET);
+    write(fd, string, strlen(string));
     exit(EXIT_SUCCESS);
 }
