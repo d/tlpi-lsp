@@ -43,7 +43,7 @@ IMPL_CFLAGS += \
 # that is fine).
 
 ifeq ($(CC),clang-8)
-	IMPL_CFLAGS += -Wno-uninitialized -Wno-infinite-recursion
+	IMPL_CFLAGS += -Wno-uninitialized -Wno-infinite-recursion -Wno-format-pedantic
 else
 	IMPL_CFLAGS += -Wno-unused-but-set-variable
 endif
