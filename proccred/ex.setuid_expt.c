@@ -31,6 +31,35 @@ displayIds(void)
             (long) ruid,  (long) euid,  (long) suid);
 }
 
+static void temporarily_drop_privs()
+{
+    uid_t uid = getuid();
+    int ret = seteuid(uid);
+    if (ret != 0)
+        errExit("seteuid");
+}
+
+static void regain_priv()
+{
+    uid_t ruid, euid, suid;
+    int r = getresuid(&ruid, &euid, &suid);
+
+    if (r != 0)
+        errExit("getresuid");
+    r = seteuid(suid);
+    if (r != 0)
+        errExit("seteuid");
+}
+
+static void permanently_drop_privs()
+{
+    uid_t uid = getuid();
+
+    int r = setresuid(-1, uid, uid);
+    if (r != 0)
+        errExit("setresuid");
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -40,13 +69,25 @@ main(int argc, char *argv[])
 
     euid = geteuid();           /* Obtain copy of privileged UID */
 
-    /* FIXME: Temporarily drop privilege */
+    temporarily_drop_privs();
 
-    /* FIXME: Regain privilege */
+    displayIds();
 
-    /* FIXME: Permanently drop privilege */
+    regain_priv();
+    displayIds();
 
-    /* FIXME: Try once more to regain privilege */
+    permanently_drop_privs();
+    displayIds();
 
+    int r = seteuid(0);
+    if (r == 0)
+    {
+        printf("seteuid succeeded\n");
+    }
+    else
+    {
+        printf("seteuid failed\n");
+    }
+    displayIds();
     exit(EXIT_SUCCESS);
 }

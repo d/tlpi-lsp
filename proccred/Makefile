@@ -4,7 +4,7 @@ GEN_EXE =
 
 LINUX_EXE = idshow
 
-EXERCISE_FILES_EXE = # ex.setuid_expt
+EXERCISE_FILES_EXE = ex.setuid_expt
 
 EXE = ${GEN_EXE} ${LINUX_EXE} ${EXERCISE_FILES_EXE}
 
